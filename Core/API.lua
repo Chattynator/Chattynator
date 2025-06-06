@@ -31,6 +31,20 @@ function Chattynator.API.RemoveDynamicFilter(func)
   end
 end
 
+addonTable.API.RejectionFilters = {}
+
+function Chattynator.API.AddRejectionFilter(func, windowIndex, tabIndex)
+  if not addonTable.API.RejectionFilters[windowIndex] then
+    addonTable.API.RejectionFilters[windowIndex] = {}
+  end
+  if not addonTable.API.RejectionFilters[windowIndex][tabIndex] then
+    addonTable.API.RejectionFilters[windowIndex][tabIndex] = {}
+  end
+  table.insert(addonTable.API.RejectionFilters[windowIndex][tabIndex], func)
+
+  addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Tabs] = true})
+end
+
 function Chattynator.API.FilterTimePlayed(state)
   if state then
     addonTable.Messages:UnregisterEvent("TIME_PLAYED_MSG")

@@ -279,6 +279,22 @@ function addonTable.Display.ChatFrameMixin:PositionEditBox()
 end
 
 function addonTable.Display.ChatFrameMixin:SetFilter(func)
+  if addonTable.API.RejectionFilters[self:GetID()] and addonTable.API.RejectionFilters[self:GetID()][self.tabIndex] then
+    local filters = addonTable.API.RejectionFilters[self:GetID()][self.tabIndex]
+    local oldFunc = func
+    func = function(data)
+      if not oldFunc(data) then
+        return false
+      end
+      local copy = CopyTable(data)
+      for _, f in ipairs(filters) do
+        if not f(copy) then
+          return false
+        end
+      end
+      return true
+    end
+  end
   self.ScrollingMessages:SetFilter(func)
 end
 
